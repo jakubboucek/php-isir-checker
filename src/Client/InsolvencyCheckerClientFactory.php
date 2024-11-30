@@ -10,7 +10,7 @@ final class InsolvencyCheckerClientFactory
 
     private const WSDL = __DIR__ . '/wsdl/IsirWsCuzkService.wsdl';
 
-    public function __construct(private ?Options $opts = null)
+    public function __construct(private readonly ?Options $opts = null)
     {
     }
 
