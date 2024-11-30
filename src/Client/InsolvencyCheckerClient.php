@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 
 namespace AsisTeam\ISIR\Client;
 
@@ -15,134 +15,131 @@ use SoapFault;
 final class InsolvencyCheckerClient
 {
 
-	/** @var SoapClient */
-	private $client;
+    /** @var SoapClient */
+    private $client;
 
-	/** @var Options|null */
-	private $options;
+    /** @var Options|null */
+    private $options;
 
-	public function __construct(SoapClient $client, ?Options $clientOpts = null)
-	{
-		$this->client = $client;
-		$this->options = $clientOpts;
-	}
+    public function __construct(SoapClient $client, ?Options $clientOpts = null)
+    {
+        $this->client = $client;
+        $this->options = $clientOpts;
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkPersonById(string $personId, bool $activeOnly = false): array
-	{
-		$opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_PERSONAL_ID);
+    /**
+     * @return Insolvency[]
+     */
+    public function checkPersonById(string $personId, bool $activeOnly = false): array
+    {
+        $opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_PERSONAL_ID);
 
-		return $this->check(['rc' => $personId], $activeOnly, $opts);
-	}
+        return $this->check(['rc' => $personId], $activeOnly, $opts);
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkCompanyById(string $companyId, bool $activeOnly = false): array
-	{
-		$opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_COMPANY_ID);
+    /**
+     * @return Insolvency[]
+     */
+    public function checkCompanyById(string $companyId, bool $activeOnly = false): array
+    {
+        $opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_COMPANY_ID);
 
-		return $this->check(['ic' => $companyId], $activeOnly, $opts);
-	}
+        return $this->check(['ic' => $companyId], $activeOnly, $opts);
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkProceeding(int $no, int $vintage, bool $activeOnly = false): array
-	{
-		$opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_FILE_NUMBER);
+    /**
+     * @return Insolvency[]
+     */
+    public function checkProceeding(int $no, int $vintage, bool $activeOnly = false): array
+    {
+        $opts = (new Options())->setMaxResultRelevancy(Relevancy::BY_FILE_NUMBER);
 
-		return $this->check(['bcVec' => $no, 'rocnik' => $vintage], $activeOnly, $opts);
-	}
+        return $this->check(['bcVec' => $no, 'rocnik' => $vintage], $activeOnly, $opts);
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkCompanyByName(
-		string $name,
-		bool $activeOnly = false,
-		?Options $opts = null
-	): array
-	{
-		return $this->check(['nazevOsoby' => $name], $activeOnly, $opts);
-	}
+    /**
+     * @return Insolvency[]
+     */
+    public function checkCompanyByName(
+        string $name,
+        bool $activeOnly = false,
+        ?Options $opts = null
+    ): array {
+        return $this->check(['nazevOsoby' => $name], $activeOnly, $opts);
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkPersonByName(
-		string $firstname,
-		string $lastname,
-		bool $activeOnly = false,
-		?Options $opts = null
-	): array
-	{
-		return $this->check(['nazevOsoby' => $lastname, 'jmeno' => $firstname], $activeOnly, $opts);
-	}
+    /**
+     * @return Insolvency[]
+     */
+    public function checkPersonByName(
+        string $firstname,
+        string $lastname,
+        bool $activeOnly = false,
+        ?Options $opts = null
+    ): array {
+        return $this->check(['nazevOsoby' => $lastname, 'jmeno' => $firstname], $activeOnly, $opts);
+    }
 
-	/**
-	 * @return Insolvency[]
-	 */
-	public function checkPersonByNameAndBirth(
-		string $lastname,
-		DateTimeImmutable $birthday,
-		bool $activeOnly = false,
-		?Options $opts = null
-	): array
-	{
-		return $this->check(
-			[
-				'nazevOsoby'    => $lastname,
-				'datumNarozeni' => $birthday->format('Y-m-d'),
-			],
-			$activeOnly,
-			$opts
-		);
-	}
+    /**
+     * @return Insolvency[]
+     */
+    public function checkPersonByNameAndBirth(
+        string $lastname,
+        DateTimeImmutable $birthday,
+        bool $activeOnly = false,
+        ?Options $opts = null
+    ): array {
+        return $this->check(
+            [
+                'nazevOsoby' => $lastname,
+                'datumNarozeni' => $birthday->format('Y-m-d'),
+            ],
+            $activeOnly,
+            $opts
+        );
+    }
 
-	/**
-	 * @param mixed[] $params
-	 * @return Insolvency[]
-	 */
-	private function check(array $params, bool $activeOnly = false, ?Options $reqOpts = null): array
-	{
-		try {
-			$opts = $this->getOpts($reqOpts);
-			$data = array_merge($params, $opts);
-			$data['filtrAktualniRizeni'] = Options::boolToStr($activeOnly);
+    /**
+     * @param mixed[] $params
+     * @return Insolvency[]
+     */
+    private function check(array $params, bool $activeOnly = false, ?Options $reqOpts = null): array
+    {
+        try {
+            $opts = $this->getOpts($reqOpts);
+            $data = array_merge($params, $opts);
+            $data['filtrAktualniRizeni'] = Options::boolToStr($activeOnly);
 
-			$resp = $this->client->getIsirWsCuzkData($data);
+            $resp = $this->client->getIsirWsCuzkData($data);
 
-			return Hydrator::hydrate($resp);
-		} catch (SoapFault $e) {
-			throw new RequestException(
-				sprintf('SOAP error %s. Request: %s', $e->getMessage(), $this->client->__getLastRequest()),
-				0,
-				$e
-			);
-		} catch (NoRecordFoundException $e) {
-			return [];
-		}
-	}
+            return Hydrator::hydrate($resp);
+        } catch (SoapFault $e) {
+            throw new RequestException(
+                sprintf('SOAP error %s. Request: %s', $e->getMessage(), $this->client->__getLastRequest()),
+                0,
+                $e
+            );
+        } catch (NoRecordFoundException $e) {
+            return [];
+        }
+    }
 
-	/**
-	 * @return mixed[]
-	 */
-	private function getOpts(?Options $reqOpts = null): array
-	{
-		$opts = [];
+    /**
+     * @return mixed[]
+     */
+    private function getOpts(?Options $reqOpts = null): array
+    {
+        $opts = [];
 
-		if ($this->options !== null) {
-			$opts = $this->options->toArray();
-		}
+        if ($this->options !== null) {
+            $opts = $this->options->toArray();
+        }
 
-		if ($reqOpts !== null) {
-			$opts = $reqOpts->toArray();
-		}
+        if ($reqOpts !== null) {
+            $opts = $reqOpts->toArray();
+        }
 
-		return $opts;
-	}
+        return $opts;
+    }
 
 }
