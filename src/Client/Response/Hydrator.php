@@ -11,11 +11,11 @@ use stdClass;
 final class Hydrator
 {
 
-    private const ERROR_INVALID_PARAMS_COMBINATION = 'WS1';
-    private const ERROR_EMPTY_DATA = 'WS2';
-    private const ERROR_NAME_TOO_SHORT = 'WS3';
+    private const string ERROR_INVALID_PARAMS_COMBINATION = 'WS1';
+    private const string ERROR_EMPTY_DATA = 'WS2';
+    private const string ERROR_NAME_TOO_SHORT = 'WS3';
 
-    private const ERROR_MSG = 'Response IRIS error %s. Text: %s. Description: %s';
+    private const string ERROR_MSG = 'Response IRIS error %s. Text: %s. Description: %s';
 
     /**
      * @return Insolvency[]

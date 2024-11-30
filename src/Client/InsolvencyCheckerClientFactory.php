@@ -8,7 +8,7 @@ use SoapClient;
 final readonly class InsolvencyCheckerClientFactory
 {
 
-    private const WSDL = __DIR__ . '/wsdl/IsirWsCuzkService.wsdl';
+    private const string WSDL = __DIR__ . '/wsdl/IsirWsCuzkService.wsdl';
 
     public function __construct(private ?Options $opts = null)
     {
