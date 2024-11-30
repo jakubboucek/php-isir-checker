@@ -16,8 +16,7 @@
     "php": "^8.3.0"
   },
   "require-dev": {
-    "ext-simplexml": "*",
-    "rector/rector": "^1.2"
+    "ext-simplexml": "*"
   },
   "autoload": {
     "psr-4": {
