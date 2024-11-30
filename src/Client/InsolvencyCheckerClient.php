@@ -15,16 +15,8 @@ use SoapFault;
 final class InsolvencyCheckerClient
 {
 
-    /** @var SoapClient */
-    private $client;
-
-    /** @var Options|null */
-    private $options;
-
-    public function __construct(SoapClient $client, ?Options $clientOpts = null)
+    public function __construct(private SoapClient $client, private ?Options $options = null)
     {
-        $this->client = $client;
-        $this->options = $clientOpts;
     }
 
     /**
@@ -119,7 +111,7 @@ final class InsolvencyCheckerClient
                 0,
                 $e
             );
-        } catch (NoRecordFoundException $e) {
+        } catch (NoRecordFoundException) {
             return [];
         }
     }
