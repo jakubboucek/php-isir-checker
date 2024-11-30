@@ -5,12 +5,12 @@ namespace AsisTeam\ISIR\Client;
 use AsisTeam\ISIR\Client\Request\Options;
 use SoapClient;
 
-final class InsolvencyCheckerClientFactory
+final readonly class InsolvencyCheckerClientFactory
 {
 
     private const WSDL = __DIR__ . '/wsdl/IsirWsCuzkService.wsdl';
 
-    public function __construct(private readonly ?Options $opts = null)
+    public function __construct(private ?Options $opts = null)
     {
     }
 

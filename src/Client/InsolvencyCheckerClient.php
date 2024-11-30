@@ -12,10 +12,10 @@ use DateTimeImmutable;
 use SoapClient;
 use SoapFault;
 
-final class InsolvencyCheckerClient
+final readonly class InsolvencyCheckerClient
 {
 
-    public function __construct(private readonly SoapClient $client, private readonly ?Options $options = null)
+    public function __construct(private SoapClient $client, private ?Options $options = null)
     {
     }
 
