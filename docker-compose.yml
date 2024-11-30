@@ -1,6 +1,6 @@
 services:
     web:
-        image: jakubboucek/lamp-devstack-php:7.2-legacy-cli
+        image: jakubboucek/lamp-devstack-php:7.3-legacy-cli
         environment:
             TZ: Europe/Prague
         restart: always
